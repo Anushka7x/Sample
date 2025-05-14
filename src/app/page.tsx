@@ -21,9 +21,9 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f0f4ff]">
       <div className="shadow-lg rounded-md border border-gray-200 w-[420px] bg-white">
-        <div className="flex bg-blue-900 text-white text-sm font-semibold rounded-t-md">
+        <div className="flex bg-primary text-white text-sm font-semibold rounded-t-md">
           <div className="flex items-center gap-2 w-1/2 px-4 py-3 border-r border-white/20">
-            <Image src="/images/logo.jpg" alt="Logo" width={25} height={25} className="rounded-sm" />
+            <Image src="/images/logo1.jpg" alt="Logo" width={25} height={25} className="rounded-sm" />
             <span className="text-red-400">Sample</span>
           </div>
           <div className="flex items-center justify-center w-1/2 px-2 py-3">
@@ -44,7 +44,7 @@ export default function LoginPage() {
               </span>
               <Input type="password" placeholder="Password" className="pl-10" />
             </div>
-            <Button type="submit" className="w-full bg-blue-900 text-white font-semibold hover:bg-blue-800">
+            <Button type="submit" className="w-full bg-primary text-white font-semibold hover:bg-blue-800">
               Login
             </Button>
             <div className="text-right text-sm mt-2">

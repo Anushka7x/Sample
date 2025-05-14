@@ -48,7 +48,8 @@ const config: Config = {
   				'3': 'hsl(var(--chart-3))',
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
-  			}
+  			},
+			    'primary-hover': 'hsl(226 71% 15%)', // blue-950
   		},
   		borderRadius: {
   			lg: 'var(--radius)',

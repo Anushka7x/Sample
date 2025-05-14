@@ -1,145 +1,188 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
-import { ChevronDown, Plus, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
+import { useState } from 'react';
+import {
+  ChevronDown,
+  ChevronRight,
+  Download,
+  Plus,
+  Settings,
+} from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from '@/components/ui/tabs';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+
+const navItems = [
+  {
+    name: 'Home',
+    href: '/',
+  },
+  {
+    name: 'Policies',
+    submenu: [
+      { name: 'Upcoming', submenu: ['Fresh', 'Renewals'] },
+      'Converted',
+      'Installments',
+    ],
+  },
+  {
+    name: 'Claims',
+    submenu: ['Claim A', 'Claim B'],
+  },
+  {
+    name: 'Accounts',
+    submenu: ['Account A', 'Account B'],
+  },
+  {
+    name: 'Reports',
+    submenu: ['Report A', 'Report B'],
+  },
+];
 
 export default function Navbar() {
-  const [showPolicies, setShowPolicies] = useState(false);
-  const [showAddMenu, setShowAddMenu] = useState(false);
-  const [expandAddBusiness, setExpandAddBusiness] = useState(false);
-  const [showImportSubmenu, setShowImportSubmenu] = useState(false);
-  const [showUpcoming, setShowUpcoming] = useState(false);
-  const [showUserDropdown, setShowUserDropdown] = useState(false);
-
+  const [hovered, setHovered] = useState<string | null>(null);
 
   return (
-    <nav className="bg-blue-900 text-white px-4 py-2 flex items-center justify-between shadow-md">
-      {/* Left: Logo + Brand */}
-      <div className="flex items-center space-x-3">
-        <Image src="/images/logo.jpg" alt="Logo" width={32} height={32} className="rounded bg-white p-1" />
-        <span className="font-bold text-lg">Sample</span>
-        <Link href="/" className="ml-4 hover:underline">Home</Link>
+    <nav className="bg-primary text-white px-6 shadow-md flex justify-between items-center font-medium">
+      <div className="flex items-center gap-1">
+        <Image
+          src="/images/logo.png"
+          alt="Logo"
+          width={42} // increase from 12
+          height={42} // increase from 12
+          className=""
+        />
 
-             {/* Policies Dropdown */}
-             <div className="relative group ml-4">
-          <button
-            className="flex items-center gap-1 hover:underline"
-            onClick={() => setShowPolicies(!showPolicies)}
-          >
-            Policies <ChevronDown size={16} />
-          </button>
-          {showPolicies && (
-            <div className="absolute z-40 top-8 left-0 w-48 bg-white text-black border shadow-md rounded">
-              <div
-                className="relative group"
-                onMouseEnter={() => setShowUpcoming(true)}
-                onMouseLeave={() => setShowUpcoming(false)}
-              >
-                <div className="flex justify-between items-center px-4 py-2 bg-gray-700 text-white cursor-pointer">
-                  Upcoming <ChevronRight size={14} />
-                </div>
-                {showUpcoming && (
-                  <div className="absolute left-full top-0 w-40 bg-white text-black border rounded shadow-md">
-                    <Link href="#" className="block px-4 py-2 hover:bg-gray-100">Fresh</Link>
-                    <Link href="#" className="block px-4 py-2 hover:bg-gray-100">Renewals</Link>
-                  </div>
-                )}
+        <span className="text-md font-semibold">SIBRO V3</span>
+
+        {navItems.map((item) => (
+          <div key={item.name} className="relative group text-sm" onMouseLeave={() => setHovered(null)}>
+            <button
+              onMouseEnter={() => setHovered(item.name)}
+              className="flex items-center gap-1 px-3 py-4 hover:bg-primary-hover"
+            >
+              {item.name}
+              {item.submenu && <ChevronDown size={16} />}
+            </button>
+            {hovered === item.name && item.submenu && (
+              <div className="absolute top-full left-0 z-50 bg-white text-black shadow-md rounded min-w-[180px]">
+                {item.submenu.map((sub: any, i: number) => {
+                  if (typeof sub === 'string') {
+                    return (
+                      <Link key={i} href="#" className="block px-4 py-2 hover:bg-gray-300">
+                        {sub}
+                      </Link>
+                    );
+                  }
+                  return (
+                    <div key={sub.name} className="relative group/sub">
+                      <div className="flex justify-between items-center px-4 py-2 bg-gray-700 text-white cursor-pointer">
+                        {sub.name} <ChevronRight size={14} />
+                      </div>
+                      <div className="absolute left-full top-0 hidden group-hover/sub:block w-40 bg-white text-black border shadow-md rounded">
+                        {sub.submenu.map((s: string, idx: number) => (
+                          <Link key={idx} href="#" className="block px-4 py-2 hover:bg-gray-300">
+                            {s}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-              <Link href="#" className="block px-4 py-2 hover:bg-gray-100">Converted</Link>
-              <Link href="#" className="block px-4 py-2 hover:bg-gray-100">Installments</Link>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        ))}
       </div>
 
-      {/* Right: Progress + Add + User */}
-      <div className="flex items-center gap-4 relative">
-        {/* Progress bar with tooltip */}
-        <div className="relative group">
-          <div className="w-52 h-2 rounded-full bg-white bg-opacity-60 overflow-hidden">
-            <div className="h-2 bg-green-500" style={{ width: '0%' }}></div>
-          </div>
-          <div className="absolute left-1/2 transform -translate-x-1/2 -top-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50">
-            <div className="bg-white text-black text-sm px-3 py-1 rounded shadow-md relative">
-              Daily Task Progress (0%)
-              <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-3 h-3 bg-white rotate-45 -mt-1 shadow-md"></div>
-            </div>
-          </div>
-        </div>
+      <div className="flex items-center gap-4">
+        {/* Download Button */}
+        <DropdownMenu>
+          <DropdownMenuTrigger className="p-2 py-4 hover:bg-primary-hover ">
+            <Download size={18} />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-72 p-2">
+            <Tabs defaultValue="completed">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="completed">Completed</TabsTrigger>
+                <TabsTrigger value="pending">Pending</TabsTrigger>
+              </TabsList>
+              <TabsContent value="completed" className="text-sm p-2">
+                <p className="text-green-600 font-medium">✔ Policy Converted BulkImport - Template is ready to download</p>
+                <a href="#" className="text-blue-500 underline">Download</a>
+                <p className="mt-2 text-xs">Started on 13-05-2025 12:05 PM</p>
+                <p className="text-xs">End on 13-05-2025 12:05 PM</p>
+              </TabsContent>
+              <TabsContent value="pending" className="text-sm p-2">
+                No pending tasks.
+              </TabsContent>
+            </Tabs>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
-        {/* + icon */}
-        <div className="relative">
-          <button onClick={() => setShowAddMenu(!showAddMenu)}>
-            <Plus className="cursor-pointer hover:text-gray-300" />
-          </button>
-
-          {/* First level: Add Business */}
-          {showAddMenu && (
-            <div
-              className="absolute right-0 mt-2 w-44 bg-white text-black border shadow-md rounded z-50"
-              onMouseLeave={() => {
-                setShowAddMenu(false);
-                setExpandAddBusiness(false);
-                setShowImportSubmenu(false);
-              }}
-            >
-              <div
-                className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex justify-between items-center"
-                onMouseEnter={() => setExpandAddBusiness(true)}
-              >
-                Add Business <ChevronRight size={14} />
+        {/* Progress Tooltip */}
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="relative w-52 h-2 rounded-full bg-white bg-opacity-60 overflow-hidden">
+                <div className="h-2 bg-green-500" style={{ width: '0%' }}></div>
               </div>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              <p>Daily Task Progress (0%)</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
 
-              {/* Second level: Add Business submenu */}
-              {expandAddBusiness && (
-                <div className="absolute top-0 right-full mr-1 w-60 bg-white text-black border shadow-md rounded z-50">
-                  {[
-                    'Prospect', 'Premium', 'Policy Request', 'Policy',
-                    'Endorsement Request', 'Endorsement', 'Outward',
-                    'Group Outward', 'Acknowledgement'
-                  ].map((item) => (
-                    <div key={item} className="px-4 py-2 hover:bg-gray-100 cursor-pointer">{item}</div>
-                  ))}
+        {/* + Icon Dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger className="p-2 py-4 hover:bg-primary-hover ">
+            <Plus size={18} />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56 text-sm">
+            {["Organization", "Policy", "Claims", "User", "Tickets", "Templates", "Automation"].map((section) => (
+              <DropdownMenuItem key={section}>{section}</DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
 
-                  {/* Import → submenu */}
-                  <div
-                    className="relative px-4 py-2 hover:bg-gray-100 cursor-pointer flex justify-between items-center"
-                    onMouseEnter={() => setShowImportSubmenu(true)}
-                  >
-                    Import <ChevronRight size={14} />
+        {/* Settings Dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger className="p-2 py-4 hover:bg-primary-hover ">
+            <Settings className='border-0' size={18} />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-48 text-sm">
+            <DropdownMenuItem>Profile</DropdownMenuItem>
+            <DropdownMenuItem>Change Password</DropdownMenuItem>
+            <DropdownMenuItem>Logout</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
-                    {showImportSubmenu && (
-                      <div className="absolute top-0 right-full mr-1 w-40 bg-white text-black border shadow-md rounded z-50">
-                        <div className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Prospect</div>
-                        <div className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Policy</div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
+        {/* DEMO + Static D */}
 
-        <span className="text-sm font-semibold">AKS</span>
-        {/* User Info Dropdown */}
-<div className="relative">
-  <div
-    className="w-8 h-8 rounded-full bg-gray-300 text-blue-900 flex items-center justify-center font-bold cursor-pointer"
-    onClick={() => setShowUserDropdown((prev) => !prev)}
-  >
-    A
-  </div>
-  {showUserDropdown && (
-    <div className="absolute right-0 mt-2 w-48 bg-white text-black border shadow-md rounded z-40">
-      <Link href="#" className="block px-4 py-2 hover:bg-gray-100">Profile</Link>
-      <Link href="#" className="block px-4 py-2 hover:bg-gray-100">Change Password</Link>
-      <Link href="#" className="block px-4 py-2 hover:bg-gray-100">Logout</Link>
-    </div>
-  )}
-</div>
+        <DropdownMenu>
+          <span className="text-sm font-semibold">DEMO</span>
+          <DropdownMenuTrigger className="p-2 py-4 hover:bg-primary-hover ">
+            <span className=' rounded-full bg-white text-primary p-1 px-2 items-center justify-center font-bold'>D</span>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-48 text-sm">
+            <DropdownMenuItem>Profile</DropdownMenuItem>
+            <DropdownMenuItem>Change Password</DropdownMenuItem>
+            <DropdownMenuItem>Logout</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
       </div>
     </nav>
