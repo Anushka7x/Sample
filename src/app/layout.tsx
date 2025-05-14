@@ -1,4 +1,4 @@
-import './globals.css';
+import '../globals.css'; // or '../styles/globals.css' if that's where it is
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import ClientLayout from '@/components/ClientLayout';
